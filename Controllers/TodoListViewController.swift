@@ -8,6 +8,7 @@
 import UIKit
 class TodoListViewController: UITableViewController {
     var itemArray = [Item]()
+    
     let defaults = UserDefaults.standard
     
     override func viewDidLoad() {
@@ -15,19 +16,21 @@ class TodoListViewController: UITableViewController {
 
        let newItem1 = Item()
         newItem1.title = "Find Mike"
-        newItem1.done = true
         itemArray.append(newItem1)
-        
         
         let newItem2 = Item()
         newItem2.title = "buy cheerios"
         itemArray.append(newItem2)
         
-        
         let newItem3 = Item()
         newItem3.title = "buy wine"
         itemArray.append(newItem3)
+        
+        if let items = defaults.array(forKey: "TodoListArray") as? [Item] {
+            itemArray = items
+        }
     }
+    
 //MARK - TableviewDataSource Methods
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return itemArray.count
@@ -69,13 +72,10 @@ class TodoListViewController: UITableViewController {
         let alert = UIAlertController(title: "Add New Todoey Item", message: "", preferredStyle: .alert)
         
         let action = UIAlertAction(title: "Add Item", style: .default) { (action) in
-//what will happen once the user clicks the Add Item button on our UIAlert
-            
+//what will happen once the user clicks the Add Item button
             let newItem = Item()
             newItem.title = textField.text!
-          //NOTE- broke after adding data model, added the two lines above
             self.itemArray.append(newItem)
-        
             //Persist Data locally -
             self.defaults.set(self.itemArray, forKey: "TodoListArray")
             //Reload Data onto TableView
@@ -85,7 +85,6 @@ class TodoListViewController: UITableViewController {
         alert.addTextField { (alertTextField) in
             alertTextField.placeholder = "Create New Item"
             textField.text = (alertTextField.text)
-            print("Not What you'd expect timewise, huh?")
         }
         
         alert.addAction(action)
